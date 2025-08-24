@@ -1,11 +1,11 @@
 package com.hover.project.role.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record UpdateRoleRequest(
 
-        @NotBlank String name,
-        @NotBlank String code,
+        @NotNull String name,
+        @NotNull String code,
         String description
 
 ) {

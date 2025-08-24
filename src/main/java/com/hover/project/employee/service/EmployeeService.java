@@ -1,15 +1,21 @@
 package com.hover.project.employee.service;
 
 import com.hover.project.employee.dto.EmployeeDto;
-import com.hover.project.employee.entity.Employee;
 import com.hover.project.employee.request.CreateEmployeeRequest;
 import com.hover.project.util.type.ApiResponse;
+import com.hover.project.util.type.PageResult;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface EmployeeService {
 
     public ApiResponse<UUID> createEmployee(CreateEmployeeRequest createEmployeeRequest);
 
-    public ApiResponse<Employee> getEmployeeById(UUID Id);
+    public ApiResponse<EmployeeDto> getEmployeeById(UUID Id);
+
+    public ApiResponse<PageResult<List<EmployeeDto>>> getEmployees(int page, int size);
+
+    public ApiResponse<UUID> deleteEmployee(UUID id);
+
 }

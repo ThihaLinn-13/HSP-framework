@@ -45,7 +45,7 @@ public class DepartmentImpl implements DepartmentService {
         var roles = departmentDao.findAllByRecordStatus(1, pageable);
 
         Map<String, List<DepartmentDto>> departmentList = new HashMap<>();
-        departmentList.put("roles", roles.getContent().stream().map(DepartmentDto::mapToDto).toList());
+        departmentList.put("departments", roles.getContent().stream().map(DepartmentDto::mapToDto).toList());
 
         PageResult<List<DepartmentDto>> pageResult = new PageResult<List<DepartmentDto>>(
                 roles.getTotalElements(),

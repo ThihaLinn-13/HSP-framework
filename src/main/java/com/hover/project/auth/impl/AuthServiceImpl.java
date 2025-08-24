@@ -36,7 +36,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public TokenResponseDto login(AuthRequestDto authRequestDto) {
-        Employee emp = employeeDao.findByUserNameOrEmail(authRequestDto.userName(), authRequestDto.password())
+        Employee emp = employeeDao
+                .findByUserNameOrEmailAndRecordStatus(authRequestDto.userName(), authRequestDto.password(), 1)
                 .orElseThrow(() -> new AuthenticationException("Invalid username or email") {
                 });
 

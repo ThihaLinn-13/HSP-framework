@@ -1,10 +1,10 @@
 package com.hover.project.department.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record UpdateDepartmentRequest(
-        @NotBlank(message = "Department name cannot be blank") String name,
-        @NotBlank(message = "Department code cannot be blank") String code,
+        @NotNull(message = "Department name cannot be null") String name,
+        @NotNull(message = "Department code cannot be null") String code,
         String description) {
 
 }

@@ -44,7 +44,7 @@ public class PositionImpl implements PositionService {
         System.out.println(roles.getTotalPages());
 
         Map<String, List<PositionDto>> positionList = new HashMap<>();
-        positionList.put("roles", roles.getContent().stream().map(PositionDto::mapToDto).toList());
+        positionList.put("positions", roles.getContent().stream().map(PositionDto::mapToDto).toList());
 
         PageResult<List<PositionDto>> pageResult = new PageResult<List<PositionDto>>(roles.getTotalElements(),
                 roles.getTotalPages(), roles.getNumber(), positionList);
@@ -68,7 +68,7 @@ public class PositionImpl implements PositionService {
 
     @Override
     public ApiResponse<UUID> updatePosition(UUID id, UpdatePositionRequest updateDepartmentRequest) {
-        var position = positionDao.findById(id);
+        var position = positionDao.findByIdAndRecordStatus(id, 1);
 
         if (position.isEmpty()) {
             return new ApiResponse<>(HttpStatusCode.NOT_FOUND, "Position not found.", null);
@@ -92,7 +92,7 @@ public class PositionImpl implements PositionService {
 
     @Override
     public ApiResponse<UUID> deletePosition(UUID id) {
-        var position = positionDao.findById(id);
+        var position = positionDao.findByIdAndRecordStatus(id, 1);
 
         if (position.isEmpty()) {
             return new ApiResponse<>(HttpStatusCode.NOT_FOUND, "Position not found.", null);

@@ -20,8 +20,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userNameOrEmail) throws UsernameNotFoundException {
-        Employee employee = employeeDao.findByUserNameOrEmail(userNameOrEmail,userNameOrEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with userNameOrEmail: " + userNameOrEmail));
+        Employee employee = employeeDao.findByUserNameOrEmailAndRecordStatus(userNameOrEmail, userNameOrEmail, 1)
+                .orElseThrow(
+                        () -> new UsernameNotFoundException("User not found with userNameOrEmail: " + userNameOrEmail));
         return new JwtUserPrincipal(
                 employee.getId(),
                 employee.getUserName(),

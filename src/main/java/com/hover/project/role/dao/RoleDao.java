@@ -15,10 +15,12 @@ import java.util.UUID;
 @Repository
 public interface RoleDao extends JpaRepository<Role, UUID> {
 
-    List<Role> findByEmployeesId(UUID id);
+    List<Role> findByEmployeesIdAndRecordStatus(UUID id, int recordStatus);
 
     Page<Role> findAllByRecordStatus(int recordStatus, Pageable pageable);
 
     Optional<Role> findByIdAndRecordStatus(UUID id, int recordStatus);
+
+    List<Role> findAllByIdInAndRecordStatus(List<UUID> ids, int recordStatus);
 
 }
