@@ -66,17 +66,16 @@ public class JwtService {
     }
 
     public boolean validateToken(String token) {
-            Jwts.parser()
-                    .verifyWith(getSigningKey())
-                    .build()
-                    .parseSignedClaims(token);
-            return true;
-
+        Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token);
+        return true;
 
     }
 
     public boolean isRefreshToken(String refreshToken) {
-            return REFRESH_TOKEN_TYPE.equals(extractTokenType(refreshToken));
+        return REFRESH_TOKEN_TYPE.equals(extractTokenType(refreshToken));
     }
 
     public boolean isAccessToken(String accessToken) {
@@ -105,11 +104,11 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-            return Jwts.parser()
-                    .verifyWith(getSigningKey())
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
 
     }
 }

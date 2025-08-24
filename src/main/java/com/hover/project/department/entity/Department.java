@@ -2,54 +2,46 @@ package com.hover.project.department.entity;
 
 import com.hover.project.employee.entity.Employee;
 import com.hover.project.position.entity.Position;
+import com.hover.project.util.type.AuditableEntity;
 import com.hover.project.util.type.Status;
 import jakarta.persistence.*;
-import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.*;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
-@Data
-public class Department {
+@Getter
+@Setter
+@NoArgsConstructor
+public class Department extends AuditableEntity {
 
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column( updatable = false, nullable = false)
-    private UUID id;
-
-    @Column( unique = true, updatable = false, insertable = false)
-    private Long autokey;
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    private OffsetDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    private OffsetDateTime updatedAt;
-
+    @NonNull
     private String name;
 
-    @Enumerated(EnumType.ORDINAL)
-    private Status status;
+    @Column(unique = true)
+    @NonNull
+    private String code;
 
-    private long recordStatus;
+    @NonNull
+    private String description;
 
     @OneToMany(mappedBy = "department")
     private List<Employee> employees = new ArrayList<>();;
 
     @ManyToMany
-    @JoinTable(name = "Department_Positon",joinColumns = @JoinColumn(name = "department_id"),
-    inverseJoinColumns = @JoinColumn(name = "position_id"))
-    private List<Position> positions = new ArrayList<>();;
+    @JoinTable(name = "Department_Position", joinColumns = @JoinColumn(name = "department_id"), inverseJoinColumns = @JoinColumn(name = "position_id"))
+    private List<Position> positions = new ArrayList<>();
 
+    public Department(String name, String code, String description) {
+        this.setName(name);
+        this.setCode(code);
+        this.setDescription(description);
+    }
 
+    public void addEmployee(Employee employee) {
+        employee.setDepartment(this);
+        employees.add(employee);
+    }
 
 }

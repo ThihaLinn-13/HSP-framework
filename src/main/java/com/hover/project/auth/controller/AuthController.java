@@ -1,6 +1,7 @@
 package com.hover.project.auth.controller;
 
 import com.hover.project.auth.dto.AuthRequestDto;
+import com.hover.project.auth.dto.ChangePasswordRequest;
 import com.hover.project.auth.dto.TokenResponseDto;
 import com.hover.project.auth.service.AuthService;
 import com.hover.project.security.service.JwtService;
@@ -24,17 +25,23 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<TokenResponseDto>> login(@RequestBody AuthRequestDto authRequestDto) {
-        //authService.createDemoUser();
+        authService.createDemoUser();
         TokenResponseDto token = authService.login(authRequestDto);
-        ApiResponse<TokenResponseDto> response = new ApiResponse<>(200,"Successfully Login",token);
+        ApiResponse<TokenResponseDto> response = new ApiResponse<>(200, "Successfully Login", token);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/refresh")
-    public TokenResponseDto refreshToken(@RequestBody TokenResponseDto tokenResponseDto) {
-
-        return authService.refreshToken(tokenResponseDto);
+    public ResponseEntity<ApiResponse<TokenResponseDto>> refreshToken(@RequestBody TokenResponseDto tokenResponseDto) {
+        var response = authService.refreshToken(tokenResponseDto);
+        return response.buildResponse(response);
     }
 
+    @PostMapping("/forget-password")
+    public ResponseEntity<ApiResponse<Void>> forgetPassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        // Implement forget password logic here
+        ApiResponse<Void> response = new ApiResponse<>(200, "Forget password functionality not implemented yet", null);
+        return ResponseEntity.ok(response);
+    }
 
 }

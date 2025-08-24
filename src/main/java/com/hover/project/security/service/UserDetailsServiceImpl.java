@@ -2,6 +2,7 @@ package com.hover.project.security.service;
 
 import com.hover.project.employee.dao.EmployeeDao;
 import com.hover.project.employee.entity.Employee;
+import com.hover.project.security.model.JwtUserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,9 +19,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private EmployeeDao employeeDao;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Employee employee = employeeDao.findByUserName(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-        return new User(employee.getUserName(), employee.getPassword(), new ArrayList<>());
+    public UserDetails loadUserByUsername(String userNameOrEmail) throws UsernameNotFoundException {
+        Employee employee = employeeDao.findByUserNameOrEmail(userNameOrEmail,userNameOrEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with userNameOrEmail: " + userNameOrEmail));
+        return new JwtUserPrincipal(
+                employee.getId(),
+                employee.getUserName(),
+                employee.getPassword(),
+                new ArrayList<>() // or employee roles
+        );
     }
 }

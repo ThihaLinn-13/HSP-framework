@@ -1,6 +1,7 @@
 package com.hover.project.menu.entity;
 
 import com.hover.project.role.entity.Role;
+import com.hover.project.util.type.AuditableEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -13,24 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-public class Menu {
-
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column( updatable = false, nullable = false)
-    private UUID id;
-
-    @Column( unique = true, updatable = false, insertable = false)
-    private Long autokey;
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    private OffsetDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    private OffsetDateTime updatedAt;
+public class Menu extends AuditableEntity {
 
     private String name;
 

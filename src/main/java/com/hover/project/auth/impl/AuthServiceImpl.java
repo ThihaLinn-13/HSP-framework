@@ -10,8 +10,9 @@ import com.hover.project.exception.handler.AuthenticationException;
 import com.hover.project.position.entity.Position;
 import com.hover.project.role.entity.Role;
 import com.hover.project.security.service.JwtService;
+import com.hover.project.util.type.ApiResponse;
 import com.hover.project.util.type.Gender;
-import com.hover.project.util.type.Status;
+import com.hover.project.util.type.HttpStatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public TokenResponseDto login(AuthRequestDto authRequestDto) {
-        Employee emp = employeeDao.findByUserNameOrEmail(authRequestDto.userName(),authRequestDto.password())
+        Employee emp = employeeDao.findByUserNameOrEmail(authRequestDto.userName(), authRequestDto.password())
                 .orElseThrow(() -> new AuthenticationException("Invalid username or email") {
                 });
 
@@ -46,11 +47,11 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtService.generateAccessToken(emp);
         String refreshToken = jwtService.generateRefreshToken(emp);
 
-        return new TokenResponseDto(accessToken,refreshToken);
+        return new TokenResponseDto(accessToken, refreshToken);
     }
 
     @Override
-    public TokenResponseDto refreshToken(TokenResponseDto tokenResponseDto) {
+    public ApiResponse<TokenResponseDto> refreshToken(TokenResponseDto tokenResponseDto) {
 
         if (!jwtService.isAccessToken(tokenResponseDto.accessToken())) {
             throw new IllegalArgumentException("Invalid access token type");
@@ -78,24 +79,28 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtService.generateAccessToken(emp.get());
         String refreshToken = jwtService.generateRefreshToken(emp.get());
 
-        return new TokenResponseDto(accessToken, refreshToken);
-    }
+        TokenResponseDto newTokenResponseDto = new TokenResponseDto(accessToken, refreshToken);
 
+        return new ApiResponse<TokenResponseDto>(HttpStatusCode.CREATED, newTokenResponseDto);
+    }
 
     @Override
     public void createDemoUser() {
 
+        long employeeCount = employeeDao.count();
+        System.out.println("Employee count: " + employeeCount);
+        if (employeeCount > 0) {
+            return;
+        }
+
         Position position = new Position();
         position.setName("Admin");
-        position.setStatus(Status.ACTIVE);
 
         Role role = new Role();
         role.setName("ADMIN");
-        role.setLevel(1);
 
         Department department = new Department();
         department.setName("IT");
-        department.setStatus(Status.ACTIVE);
 
         Employee emp = new Employee();
         emp.setUserName("Thiha");
@@ -110,10 +115,10 @@ public class AuthServiceImpl implements AuthService {
         emp.setDateOfBirth(LocalDate.of(2004, 2, 13));
         emp.setNrcNumber("12/mayaka(N)175637");
         emp.setDateOfEmployment(LocalDate.of(2023, 1, 1));
-        emp.setRecordStatus(1L);
+        emp.setRecordStatus(1);
 
-        emp.setPosition(position);       // Set created Position
-        emp.setDepartment(department);        // No department
+        emp.setPosition(position); // Set created Position
+        emp.setDepartment(department); // No department
         emp.setRoles(Collections.singletonList(role));
 
         employeeDao.save(emp);

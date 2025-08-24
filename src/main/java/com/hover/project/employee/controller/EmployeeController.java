@@ -1,6 +1,9 @@
 package com.hover.project.employee.controller;
 
 import com.hover.project.employee.dao.EmployeeDao;
+import com.hover.project.employee.request.CreateEmployeeRequest;
+import com.hover.project.employee.service.EmployeeService;
+import com.hover.project.util.type.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +16,7 @@ import java.util.UUID;
 public class EmployeeController {
 
     @Autowired
-    private EmployeeDao employeeDao;
+    private EmployeeService employeeService;
 
     @PostMapping()
     public void createEmployee(){
@@ -21,8 +24,9 @@ public class EmployeeController {
     }
 
     @GetMapping()
-    public ResponseEntity<String> getAllEmployee(){
-        return ResponseEntity.ok("Hello security");
+    public ResponseEntity<ApiResponse<UUID>> getAllEmployee(@RequestBody CreateEmployeeRequest createEmployeeRequest){
+        var response = employeeService.createEmployee(createEmployeeRequest);
+        return response.buildResponse(response);
     }
 
     @GetMapping("/{syskey}")
