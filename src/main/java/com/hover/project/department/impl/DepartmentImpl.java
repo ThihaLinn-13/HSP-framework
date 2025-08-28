@@ -1,12 +1,12 @@
 package com.hover.project.department.impl;
 
 import com.hover.project.department.dao.DepartmentDao;
-import com.hover.project.department.dto.AddDepartmentRequest;
-import com.hover.project.department.dto.DepartmentDto;
-import com.hover.project.department.dto.UpdateDepartmentRequest;
 import com.hover.project.department.entity.Department;
+import com.hover.project.department.mapper.DepartmentMapper;
+import com.hover.project.department.request.AddDepartmentRequest;
+import com.hover.project.department.request.UpdateDepartmentRequest;
+import com.hover.project.department.response.DepartmentResponse;
 import com.hover.project.department.service.DepartmentService;
-import com.hover.project.role.dto.RoleDto;
 import com.hover.project.util.type.ApiResponse;
 import com.hover.project.util.type.HttpStatusCode;
 import com.hover.project.util.type.PageResult;
@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +28,13 @@ public class DepartmentImpl implements DepartmentService {
     @Autowired
     private DepartmentDao departmentDao;
 
-    @Override
-    public ApiResponse<UUID> addDepartment(AddDepartmentRequest addDepartmentRequest) {
+    @Autowired
+    private DepartmentMapper departmentMapper;
 
-        Department department = addDepartmentRequest.mapToEntity();
+    @Override
+    public ApiResponse<UUID> addDepartment(@RequestBody AddDepartmentRequest addDepartmentRequest) {
+
+        Department department = departmentMapper.mapToEntityFromAddDepartmentRequest(addDepartmentRequest);
 
         Department newDepartment = departmentDao.save(department);
 
@@ -38,16 +42,16 @@ public class DepartmentImpl implements DepartmentService {
     }
 
     @Override
-    public ApiResponse<PageResult<List<DepartmentDto>>> getDepartments(int page, int size) {
+    public ApiResponse<PageResult<List<DepartmentResponse>>> getDepartments(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
         var roles = departmentDao.findAllByRecordStatus(1, pageable);
 
-        Map<String, List<DepartmentDto>> departmentList = new HashMap<>();
-        departmentList.put("departments", roles.getContent().stream().map(DepartmentDto::mapToDto).toList());
+        Map<String, List<DepartmentResponse>> departmentList = new HashMap<>();
+        departmentList.put("departments", roles.getContent().stream().map(departmentMapper::mapToDto).toList());
 
-        PageResult<List<DepartmentDto>> pageResult = new PageResult<List<DepartmentDto>>(
+        PageResult<List<DepartmentResponse>> pageResult = new PageResult<List<DepartmentResponse>>(
                 roles.getTotalElements(),
                 roles.getTotalPages(),
                 roles.getNumber(),
@@ -57,15 +61,15 @@ public class DepartmentImpl implements DepartmentService {
     }
 
     @Override
-    public ApiResponse<DepartmentDto> getDepartmentById(UUID id) {
+    public ApiResponse<DepartmentResponse> getDepartmentById(UUID id) {
         var department = departmentDao.findByIdAndRecordStatus(id, 1);
 
         if (department.isEmpty()) {
             return new ApiResponse<>(HttpStatusCode.NOT_FOUND, "Department not found.", null);
         }
-        DepartmentDto departmentDto = DepartmentDto.mapToDto(department.get());
+        DepartmentResponse DepartmentResponse = departmentMapper.mapToDto(department.get());
 
-        return new ApiResponse<>(HttpStatusCode.OK, departmentDto);
+        return new ApiResponse<>(HttpStatusCode.OK, DepartmentResponse);
 
     }
 

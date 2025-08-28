@@ -1,4 +1,4 @@
-package com.hover.project.role.dto;
+package com.hover.project.role.request;
 
 import com.hover.project.role.entity.Role;
 import jakarta.validation.constraints.NotBlank;

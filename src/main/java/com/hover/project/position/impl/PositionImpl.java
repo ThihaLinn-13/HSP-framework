@@ -1,12 +1,11 @@
 package com.hover.project.position.impl;
 
-import com.hover.project.department.dto.DepartmentDto;
-import com.hover.project.department.entity.Department;
 import com.hover.project.position.dao.PositionDao;
-import com.hover.project.position.dto.AddPositionRequest;
-import com.hover.project.position.dto.PositionDto;
-import com.hover.project.position.dto.UpdatePositionRequest;
 import com.hover.project.position.entity.Position;
+import com.hover.project.position.mapper.PositionMapper;
+import com.hover.project.position.request.AddPositionRequest;
+import com.hover.project.position.request.UpdatePositionRequest;
+import com.hover.project.position.response.PositionResponse;
 import com.hover.project.position.service.PositionService;
 import com.hover.project.util.type.ApiResponse;
 import com.hover.project.util.type.HttpStatusCode;
@@ -28,32 +27,35 @@ public class PositionImpl implements PositionService {
     @Autowired
     private PositionDao positionDao;
 
+    @Autowired
+    private PositionMapper positionMapper;
+
     @Override
     public ApiResponse<UUID> addPosition(AddPositionRequest addPositionRequest) {
-        Position position = addPositionRequest.mapToEntity();
+        Position position = positionMapper.mapToEntityFromAddPositionRequest(addPositionRequest);
         Position newPosition = positionDao.save(position);
         return new ApiResponse<>(HttpStatusCode.OK, "Successfully created position", newPosition.getId());
     }
 
     @Override
-    public ApiResponse<PageResult<List<PositionDto>>> getPositions(int page, int size) {
+    public ApiResponse<PageResult<List<PositionResponse>>> getPositions(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
         var roles = positionDao.findAllByRecordStatus(1, pageable);
 
         System.out.println(roles.getTotalPages());
 
-        Map<String, List<PositionDto>> positionList = new HashMap<>();
-        positionList.put("positions", roles.getContent().stream().map(PositionDto::mapToDto).toList());
+        Map<String, List<PositionResponse>> positionList = new HashMap<>();
+        positionList.put("positions", roles.getContent().stream().map(positionMapper::mapToPositionResponse).toList());
 
-        PageResult<List<PositionDto>> pageResult = new PageResult<List<PositionDto>>(roles.getTotalElements(),
+        PageResult<List<PositionResponse>> pageResult = new PageResult<List<PositionResponse>>(roles.getTotalElements(),
                 roles.getTotalPages(), roles.getNumber(), positionList);
 
         return new ApiResponse<>(HttpStatusCode.OK, pageResult);
     }
 
     @Override
-    public ApiResponse<PositionDto> getPositionById(UUID id) {
+    public ApiResponse<PositionResponse> getPositionById(UUID id) {
 
         var position = positionDao.findByIdAndRecordStatus(id, 1);
 
@@ -61,7 +63,7 @@ public class PositionImpl implements PositionService {
             return new ApiResponse<>(HttpStatusCode.NOT_FOUND, "Position not found.", null);
         }
 
-        PositionDto positionDto = PositionDto.mapToDto(position.get());
+        PositionResponse positionDto = positionMapper.mapToPositionResponse(position.get());
 
         return new ApiResponse<>(HttpStatusCode.OK, positionDto);
     }

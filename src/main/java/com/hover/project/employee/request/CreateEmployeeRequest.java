@@ -15,23 +15,16 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-
 public record CreateEmployeeRequest(
-        @NotBlank(message = "Employee ID is required")
-        String employeeId,
+        @NotBlank(message = "Employee ID is required") String employeeId,
 
-        @NotBlank(message = "User name is required")
-        String userName,
+        @NotBlank(message = "User name is required") String userName,
 
-        @NotBlank(message = "Email is required")
-        @Email(message = "Email is invalid")
-        String email,
+        @NotBlank(message = "Email is required") @Email(message = "Email is invalid") String email,
 
-        @NotBlank(message = "Password is required")
-        String password,
+        @NotBlank(message = "Password is required") String password,
 
-        @NotNull(message = "Gender is required")
-        Gender gender,
+        @NotNull(message = "Gender is required") Gender gender,
 
         LocalDate dateOfBirth,
 
@@ -43,11 +36,10 @@ public record CreateEmployeeRequest(
 
         UUID departmentId,
 
-        List<UUID> roleIds
-) {
+        List<UUID> roleIds) {
 
-
-    public Employee mapToEntity(PasswordEncoder passwordEncoder, Position position, Department department, List<Role> roles) {
+    public Employee mapToEntity(PasswordEncoder passwordEncoder, Position position, Department department,
+            List<Role> roles) {
         Employee employee = new Employee();
         employee.setEmployeeId(this.employeeId);
         employee.setUserName(this.userName);

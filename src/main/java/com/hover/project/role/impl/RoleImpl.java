@@ -1,10 +1,11 @@
 package com.hover.project.role.impl;
 
 import com.hover.project.role.dao.RoleDao;
-import com.hover.project.role.dto.AddRoleRequest;
-import com.hover.project.role.dto.RoleDto;
-import com.hover.project.role.dto.UpdateRoleRequest;
 import com.hover.project.role.entity.Role;
+import com.hover.project.role.maper.RoleMapper;
+import com.hover.project.role.request.AddRoleRequest;
+import com.hover.project.role.request.UpdateRoleRequest;
+import com.hover.project.role.response.RoleResponse;
 import com.hover.project.role.service.RoleService;
 import com.hover.project.util.type.ApiResponse;
 import com.hover.project.util.type.HttpStatusCode;
@@ -26,6 +27,9 @@ public class RoleImpl implements RoleService {
     @Autowired
     private RoleDao roleDao;
 
+    @Autowired
+    private RoleMapper roleMapper;
+
     @Override
     public ApiResponse<UUID> addRole(AddRoleRequest addRoleRequest) {
 
@@ -37,30 +41,30 @@ public class RoleImpl implements RoleService {
     }
 
     @Override
-    public ApiResponse<PageResult<List<RoleDto>>> getRoles(int page, int size) {
+    public ApiResponse<PageResult<List<RoleResponse>>> getRoles(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
         var roles = roleDao.findAllByRecordStatus(1, pageable);
 
-        Map<String, List<RoleDto>> roleList = new HashMap<>();
-        roleList.put("roles", roles.getContent().stream().map(RoleDto::mapToDto).toList());
+        Map<String, List<RoleResponse>> roleList = new HashMap<>();
+        roleList.put("roles", roles.getContent().stream().map(roleMapper::mapToRoleResponse).toList());
 
-        PageResult<List<RoleDto>> pageResult = new PageResult<List<RoleDto>>(roles.getTotalElements(),
+        PageResult<List<RoleResponse>> pageResult = new PageResult<List<RoleResponse>>(roles.getTotalElements(),
                 roles.getTotalPages(), roles.getNumber(), roleList);
 
         return new ApiResponse<>(HttpStatusCode.OK, pageResult);
     }
 
     @Override
-    public ApiResponse<RoleDto> getRoleById(UUID id) {
+    public ApiResponse<RoleResponse> getRoleById(UUID id) {
 
         var role = roleDao.findByIdAndRecordStatus(id, 1);
         if (role.isEmpty()) {
             return new ApiResponse<>(HttpStatusCode.NOT_FOUND, "Role not found.", null);
         }
 
-        RoleDto roleDto = RoleDto.mapToDto(role.get());
+        RoleResponse roleDto = roleMapper.mapToRoleResponse(role.get());
 
         return new ApiResponse<>(HttpStatusCode.OK, roleDto);
 

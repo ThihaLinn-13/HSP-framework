@@ -1,8 +1,8 @@
 package com.hover.project.position.service;
 
-import com.hover.project.position.dto.AddPositionRequest;
-import com.hover.project.position.dto.PositionDto;
-import com.hover.project.position.dto.UpdatePositionRequest;
+import com.hover.project.position.request.AddPositionRequest;
+import com.hover.project.position.request.UpdatePositionRequest;
+import com.hover.project.position.response.PositionResponse;
 import com.hover.project.util.type.ApiResponse;
 import com.hover.project.util.type.PageResult;
 
@@ -13,9 +13,9 @@ public interface PositionService {
 
     public ApiResponse<UUID> addPosition(AddPositionRequest addPositionRequest);
 
-    public ApiResponse<PageResult<List<PositionDto>>> getPositions(int page, int size);
+    public ApiResponse<PageResult<List<PositionResponse>>> getPositions(int page, int size);
 
-    public ApiResponse<PositionDto> getPositionById(UUID id);
+    public ApiResponse<PositionResponse> getPositionById(UUID id);
 
     public ApiResponse<UUID> updatePosition(UUID id, UpdatePositionRequest updatePositionRequest);
 

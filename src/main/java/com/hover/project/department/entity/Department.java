@@ -23,7 +23,6 @@ public class Department extends AuditableEntity {
     @NonNull
     private String code;
 
-    @NonNull
     private String description;
 
     @OneToMany(mappedBy = "department")
