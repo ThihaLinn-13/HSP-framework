@@ -17,7 +17,7 @@ public class CacheConfig {
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
                 "employees", "departments", "positions", "roles",
-                "employee", "department", "position", "role");
+                "employee", "department", "position", "role","menus","menu");
         cacheManager.setCaffeine(caffeineCacheBuilder());
         return cacheManager;
     }

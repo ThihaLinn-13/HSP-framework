@@ -47,7 +47,7 @@ public class RoleImpl implements RoleService {
 
         var roles = roleDao.findAllByRecordStatus(1, pageable);
 
-        Map<String, List<RoleResponse>> roleList = new HashMap<>();
+         Map<String, List<RoleResponse>> roleList = new HashMap<>();
         roleList.put("roles", roles.getContent().stream().map(roleMapper::mapToRoleResponse).toList());
 
         PageResult<List<RoleResponse>> pageResult = new PageResult<List<RoleResponse>>(roles.getTotalElements(),

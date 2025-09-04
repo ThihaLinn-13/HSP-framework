@@ -41,6 +41,4 @@ public class Role extends AuditableEntity {
     )
     private List<Menu> menus = new ArrayList<>();
 
-
-
 }
